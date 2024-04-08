@@ -1,23 +1,13 @@
 ﻿using SvnCoreDemo;
+using System.Xml.Linq;
 
 Console.WriteLine("Hello, World!");
 
 // 设置 PowerShell 脚本内容
 //string powerShellScript = @"Write-Host 'Hello, World!'";
-//string shellScript = "import-module visualsvn \r get-childitem -Path 'D:\\PengW\\work\\SVNWeb\\SVN\\SvnRepositories' | select-object name,mode,length"; //
-string shellScript = "import-module visualsvn \r get-childitem -Path 'D:\\SoftWare\\SVN\\SVNRepositories' | select-object name,mode";
+string shellScript = "import-module visualsvn \r get-childitem -Path 'D:\\PengW\\work\\SVNWeb\\SVN\\SvnRepositories' | select-object name,mode,length"; //
+                                                                                                                                                        //string shellScript = "import-module visualsvn \r get-childitem -Path 'D:\\SoftWare\\SVN\\SVNRepositories' | select-object name,mode";
 
-
-//string script = @"
-//$svnRepo = 'D:\SoftWare\SVN\SVNRepositories\'
-//$username = 'repositoryTest'
-
-//$cred = Get-Credential
-//$svnUser = $cred.UserName
-//$svnPass = $cred.GetNetworkCredential().Password
-
-//svn ls --username $svnUser --password $svnPass --depth immediates $svnRepo
-//";
 
 
 #region 获取svn 仓库信息
@@ -37,6 +27,13 @@ foreach (var item in newDatas)
 }
 
 #endregion
+
+//var sss = SVNHelper.CreateRepositoryFolders("repositoryTest", new string[] { "demo" });
+
+string CreateRepositoryShellScript = "new-svnrepository - name \"repositoryTest5\""; //
+
+ ExecutePowerShell.ExecutePowerShellScript(CreateRepositoryShellScript);
+
 
 
 

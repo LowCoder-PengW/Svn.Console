@@ -59,6 +59,7 @@ namespace SvnDemo
 
 
 
+
             #region 获取子仓库用户权限
 
             string subName = "repositoryTest";

@@ -231,7 +231,7 @@ namespace SvnCoreDemo
             {
                 var svn = new ManagementClass("root\\VisualSVN", "VisualSVN_Repository", null);
                 ManagementBaseObject @params = svn.GetMethodParameters("Create"); //创建方法参数引用
-                @params["Name"] = name.Trim(); //传入参数
+                @params["Name"] = name.Trim(); //传入参数 
                 @params["SearchEnabled"] = true; //传入参数 
                 svn.InvokeMethod("Create", @params, null); //执行
                 return true;
@@ -247,7 +247,7 @@ namespace SvnCoreDemo
         #region  创建svn仓库目录
 
         /// <summary>
-        ///     创建svn仓库目录
+        ///     创建svn仓库目录 
         /// </summary>
         /// <param name="repositories"> </param>
         /// <param name="name"></param>
