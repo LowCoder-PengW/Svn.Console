@@ -1,4 +1,5 @@
-﻿using SvnCoreDemo;
+﻿using SharpSvn;
+using SvnCoreDemo;
 using System.Xml.Linq;
 
 Console.WriteLine("Hello, World!");
@@ -25,17 +26,37 @@ foreach (var item in newDatas)
 {
     Console.WriteLine(item);
 }
-
+Console.WriteLine(txt);
 #endregion
 
-//var sss = SVNHelper.CreateRepositoryFolders("repositoryTest", new string[] { "demo" });
 
-string CreateRepositoryShellScript = "new-svnrepository - name \"repositoryTest5\""; //
+// 创建 SvnRepositoryClient 实例
+using (SvnRepositoryClient client = new SvnRepositoryClient())
+{
+    // SVN 服务器的地址
+    string serverUrl = "http://192.168.1.221/svn";
 
- ExecutePowerShell.ExecutePowerShellScript(CreateRepositoryShellScript);
+    // 新仓库的名称
+    string repositoryName = "newrepo";
+
+    // SVN 仓库的完整地址
+    string repositoryPath = serverUrl + "/" + repositoryName;
+
+    // 调用 CreateRepository 方法创建 SVN 仓库
+    SvnCreateRepositoryArgs createArgs = new SvnCreateRepositoryArgs();
+    client.CreateRepository(repositoryPath, createArgs);
+
+    // 输出提示信息
+    Console.WriteLine("SVN 仓库创建成功！");
+}
+
+//var isok = SVNHelper.CreateRepository("repositoryTest6");
+
+//string CreateRepositoryShellScript = "new-svnrepository - name \"repositoryTest5\""; // 
+//ExecutePowerShell.ExecutePowerShellScript(CreateRepositoryShellScript);
 
 
 
 
-Console.WriteLine(txt);
+
 

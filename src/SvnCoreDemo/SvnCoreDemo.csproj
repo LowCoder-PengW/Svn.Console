@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SharpSvn" Version="1.14003.272" />
     <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 

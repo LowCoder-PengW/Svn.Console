@@ -279,31 +279,7 @@ namespace SvnCoreDemo
 
 
         #endregion
-
-
-        public static void GetRepositoryUser()
-        {
-            // 实例化 ManagementClass
-            ManagementClass managementClass = new ManagementClass(@"root\VisualSVN", "VisualSVN_RepositoryPermission", null);
-
-            // 获取所有实例
-            ManagementObjectCollection instances = managementClass.GetInstances();
-
-            // 遍历每个实例获取用户信息
-            foreach (ManagementObject instance in instances)
-            {
-                string repositoryName = instance["RepositoryName"].ToString();
-                string accountName = instance["AccountName"].ToString();
-                string permissions = instance["Permissions"].ToString();
-
-                Console.WriteLine("Repository: {0}", repositoryName);
-                Console.WriteLine("User: {0}", accountName);
-                Console.WriteLine("Permissions: {0}", permissions);
-                Console.WriteLine();
-            }
-        }
-
-
+         
 
         #region 读取
 
