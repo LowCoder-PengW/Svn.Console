@@ -40,11 +40,14 @@ namespace SvnCoreDemo
                 // 获取脚本的输出
                 string output = process.StandardOutput.ReadToEnd();
 
+                var code = process.ExitCode;
+
                 // 输出脚本的输出
                 // Console.WriteLine(output);
                 return output;
             }
         }
+
 
     }
 }

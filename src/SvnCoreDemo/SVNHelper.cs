@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 
 namespace SvnCoreDemo
 {
@@ -279,7 +282,7 @@ namespace SvnCoreDemo
 
 
         #endregion
-         
+
 
         #region 读取
 
@@ -367,5 +370,185 @@ namespace SvnCoreDemo
 
 
         #endregion
+
+
+
+
+
+
+        /// <summary>
+        /// 获取仓库文件夹
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static Tuple<bool, List<string>, string> GetSvnRepositoryFolder(string repository, string path)
+        {
+            var getSvnRepositoryItemScript = $"Get-SvnRepositoryItem -repository \"{repository}\" -path \"{path}\" | select-object Name,Type";
+            var result = ExecutePowerShell.ExecutePowerShellScript(getSvnRepositoryItemScript);
+
+            var temp = result.Split("\r\n").ToList();
+            var tempDatas = temp.Where(r => r.Contains("Folder")).ToList();
+            if (!tempDatas.Any())
+            {
+                return Tuple.Create(true, new List<string>(), "同步仓库文件夹成功!");
+            }
+
+            List<string> datas = new List<string>();
+            foreach (var item in tempDatas)
+            {
+                var standardDatas = item.Split(" ").ToList().Where(r => !string.IsNullOrWhiteSpace(r)).Where(r => r != "Folder").ToList();
+                datas.AddRange(standardDatas);
+            }
+
+            return Tuple.Create(true, datas, "同步仓库文件夹成功!");
+        }
+
+        /// <summary>
+        /// 获取仓库文件
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static Tuple<bool, List<string>, string> GetSvnRepositoryFile(string repository, string path)
+        {
+            var getSvnRepositoryItemScript = $"Get-SvnRepositoryItem -repository \"{repository}\" -path \"{path}\" | select-object Name,Type";
+            var result = ExecutePowerShell.ExecutePowerShellScript(getSvnRepositoryItemScript);
+
+
+            var temp = result.Split("\r\n").ToList();
+            var tempDatas = temp.Where(r => r.Contains("File")).ToList();
+            if (!tempDatas.Any())
+            {
+                return Tuple.Create(true, new List<string>(), "同步仓库文件成功!");
+            }
+
+            List<string> datas = new List<string>();
+            foreach (var item in tempDatas)
+            {
+                var standardDatas = item.Split(" ").ToList().Where(r => !string.IsNullOrWhiteSpace(r)).Where(r => r != "File").ToList();
+                datas.AddRange(standardDatas);
+            }
+
+            return Tuple.Create(true, datas, "同步仓库文件成功!");
+        }
+
+
+        public static void ssss(string repository)
+        {
+            List<string> strList = new List<string>();
+
+            var file = GetSvnRepositoryFile(repository, "/");
+            foreach (var item in file.Item2)
+            {
+                strList.Add(item);
+                Console.WriteLine(item);
+            }
+
+            var result = GetSvnRepositoryFolder(repository, "/");
+            foreach (var item in result.Item2)
+            {
+                Console.WriteLine(item);
+                strList.Add(item);
+                var res = Traversal(repository, "/" + item);
+                strList.AddRange(res.Item2);
+            }
+
+            Console.WriteLine("------------------------");
+            foreach (var item in strList)
+            {
+                Console.WriteLine(item);
+            }
+        }
+
+
+        public static void ssssTask(string repository)
+        {
+            List<string> strList = new List<string>();
+            var file = GetSvnRepositoryFile(repository, "/");
+            foreach (var item in file.Item2)
+            {
+                strList.Add(item);
+                Console.WriteLine(item);
+            }
+
+            var result = GetSvnRepositoryFolder(repository, "/");
+            foreach (var item in result.Item2)
+            {
+                Console.WriteLine(item);
+                strList.Add(item);
+                var res = TraversalTask(repository, "/" + item);
+                strList.AddRange(res.Item2);
+            }
+
+            Console.WriteLine("------------------------");
+            foreach (var item in strList)
+            {
+                Console.WriteLine(item);
+            }
+
+        }
+
+
+        internal static Tuple<bool, List<string>> Traversal(string repository, string path)
+        {
+            List<string> strings = new List<string>();
+            var file = GetSvnRepositoryFile(repository, path);
+
+            foreach (var item in file.Item2)
+            {
+                strings.Add(path + "/" + item);
+                Console.WriteLine(path + "/" + item);
+            }
+
+            var result = GetSvnRepositoryFolder(repository, path);
+
+            foreach (var item in result.Item2)
+            {
+                strings.Add(path + "/" + item);
+
+                Console.WriteLine(path + "/" + item);
+                var res = Traversal(repository, $"{path}/{item}");
+                strings.AddRange(res.Item2);
+            }
+            return Tuple.Create(true, strings);
+        }
+
+        public static Tuple<bool, List<string>> TraversalTask(string repository, string path)
+        {
+            List<string> strings = new List<string>();
+            Task.Run(() =>
+              {
+                  var file = GetSvnRepositoryFile(repository, path);
+
+                  foreach (var item in file.Item2)
+                  {
+                      strings.Add(path + "/" + item);
+                      Console.WriteLine(path + "/" + item);
+                  }
+
+              });
+
+
+
+            Task.Run(() =>
+            {
+                var result = GetSvnRepositoryFolder(repository, path);
+
+                foreach (var item in result.Item2)
+                {
+                    strings.Add(path + "/" + item);
+                    Console.WriteLine(path + "/" + item);
+                    var res = TraversalTask(repository, $"{path}/{item}");
+                    strings.AddRange(res.Item2);
+                }
+            });
+
+            return Tuple.Create(true, strings);
+
+        }
+
+
+         
     }
 }
